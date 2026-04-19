@@ -20,9 +20,7 @@ def _stub_find_movie(respx_mock: respx.MockRouter, imdb: str, tmdb_id: int) -> N
     )
 
 
-def _stub_videos_movie(
-    respx_mock: respx.MockRouter, tmdb_id: int, videos: list[dict]
-) -> None:
+def _stub_videos_movie(respx_mock: respx.MockRouter, tmdb_id: int, videos: list[dict]) -> None:
     respx_mock.get(f"{TMDB_BASE_URL}/movie/{tmdb_id}/videos").mock(
         return_value=httpx.Response(200, json={"results": videos})
     )
@@ -79,9 +77,7 @@ async def test_find_trailer_rejects_bad_imdb(app_ctx: AppContext) -> None:
     assert resp.error.code == "invalid_argument"
 
 
-async def test_find_trailer_not_found(
-    app_ctx: AppContext, respx_mock: respx.MockRouter
-) -> None:
+async def test_find_trailer_not_found(app_ctx: AppContext, respx_mock: respx.MockRouter) -> None:
     respx_mock.get(f"{TMDB_BASE_URL}/find/tt9999999").mock(
         return_value=httpx.Response(200, json={"movie_results": [], "tv_results": []})
     )
@@ -95,9 +91,7 @@ async def test_find_trailer_uses_tv_endpoint_for_series(
     app_ctx: AppContext, respx_mock: respx.MockRouter
 ) -> None:
     respx_mock.get(f"{TMDB_BASE_URL}/find/tt8134470").mock(
-        return_value=httpx.Response(
-            200, json={"movie_results": [], "tv_results": [{"id": 100474}]}
-        )
+        return_value=httpx.Response(200, json={"movie_results": [], "tv_results": [{"id": 100474}]})
     )
     respx_mock.get(f"{TMDB_BASE_URL}/tv/100474/videos").mock(
         return_value=httpx.Response(
@@ -125,14 +119,10 @@ async def test_search_trailer_by_title_prefers_higher_popularity_tv(
     app_ctx: AppContext, respx_mock: respx.MockRouter
 ) -> None:
     respx_mock.get(f"{TMDB_BASE_URL}/search/movie").mock(
-        return_value=httpx.Response(
-            200, json={"results": [{"id": 1, "popularity": 3.0}]}
-        )
+        return_value=httpx.Response(200, json={"results": [{"id": 1, "popularity": 3.0}]})
     )
     respx_mock.get(f"{TMDB_BASE_URL}/search/tv").mock(
-        return_value=httpx.Response(
-            200, json={"results": [{"id": 42, "popularity": 50.0}]}
-        )
+        return_value=httpx.Response(200, json={"results": [{"id": 42, "popularity": 50.0}]})
     )
     respx_mock.get(f"{TMDB_BASE_URL}/tv/42/videos").mock(
         return_value=httpx.Response(

@@ -74,9 +74,7 @@ async def find_trailer_impl(
             )
         )
 
-    cache_key = ctx.cache.make_key(
-        "find_trailer", {"imdb_id": imdb_id, "language": language}
-    )
+    cache_key = ctx.cache.make_key("find_trailer", {"imdb_id": imdb_id, "language": language})
     cached = await ctx.cache.get(cache_key)
     if cached is not None:
         return FindTrailerResponse.model_validate(cached)
@@ -109,9 +107,7 @@ async def find_trailer_impl(
     kind_raw, tmdb_id = resolved
     kind: TitleKind = "series" if kind_raw == "series" else "movie"
     response = await _collect_trailers(ctx, kind=kind, tmdb_id=tmdb_id, language=language)
-    await ctx.cache.set(
-        cache_key, response.model_dump(mode="json"), ctx.settings.cache_ttl_seconds
-    )
+    await ctx.cache.set(cache_key, response.model_dump(mode="json"), ctx.settings.cache_ttl_seconds)
     return response
 
 
@@ -164,9 +160,7 @@ async def search_trailer_by_title_impl(
     best_kind, best_row = _pick_best_match(movie, tv)
     if best_row is None:
         return FindTrailerResponse(
-            error=ToolError(
-                code="not_found", message=f"TMDB has no match for '{title}'."
-            )
+            error=ToolError(code="not_found", message=f"TMDB has no match for '{title}'.")
         )
 
     tmdb_id = best_row.get("id")
@@ -178,9 +172,7 @@ async def search_trailer_by_title_impl(
     response = await _collect_trailers(
         ctx, kind=best_kind, tmdb_id=tmdb_id, language=language, fallback_query=title
     )
-    await ctx.cache.set(
-        cache_key, response.model_dump(mode="json"), ctx.settings.cache_ttl_seconds
-    )
+    await ctx.cache.set(cache_key, response.model_dump(mode="json"), ctx.settings.cache_ttl_seconds)
     return response
 
 

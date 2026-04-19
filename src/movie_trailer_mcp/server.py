@@ -63,7 +63,9 @@ def build_server(ctx: AppContext) -> FastMCP:
 async def _run(settings: Settings, transport: str) -> None:
     async with build_app_context(settings) as ctx:
         server = build_server(ctx)
-        structlog.get_logger().info("trailer_mcp.starting", version=__version__, transport=transport)
+        structlog.get_logger().info(
+            "trailer_mcp.starting", version=__version__, transport=transport
+        )
         if transport == "stdio":
             await server.run_stdio_async()
         elif transport == "sse":

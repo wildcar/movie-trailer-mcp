@@ -49,9 +49,7 @@ class TMDBClient:
 
         One round-trip — ``/find`` returns all categories at once.
         """
-        data = await self._get_json(
-            f"/find/{imdb_id}", params={"external_source": "imdb_id"}
-        )
+        data = await self._get_json(f"/find/{imdb_id}", params={"external_source": "imdb_id"})
         movies = data.get("movie_results") or []
         if isinstance(movies, list) and movies and isinstance(movies[0].get("id"), int):
             return "movie", int(movies[0]["id"])
@@ -86,9 +84,7 @@ class TMDBClient:
         return await self._top_search("/search/movie", title, year, year_param="year")
 
     async def search_tv(self, title: str, year: int | None = None) -> dict[str, Any] | None:
-        return await self._top_search(
-            "/search/tv", title, year, year_param="first_air_date_year"
-        )
+        return await self._top_search("/search/tv", title, year, year_param="first_air_date_year")
 
     async def _top_search(
         self, path: str, query: str, year: int | None, *, year_param: str
